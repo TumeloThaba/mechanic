@@ -265,7 +265,15 @@ a{
     grid-template-columns: 1fr 1fr !important; /* Exactly 2 columns */
     gap: 12px;
   }
+   .hero-buttons {
+    flex-direction: column; /* Stacks buttons on top of each other on phones */
+    width: 100%;
+    max-width: 300px;       /* Prevents buttons from being too wide */
+  }
   
+  .hero-buttons button {
+    width: 100%;
+  }
   .card {
     padding: 15px; /* Less padding to fit columns */
   }
