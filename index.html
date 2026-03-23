@@ -304,12 +304,9 @@ a:hover{
 }
   /* --- MOBILE RESPONSIVE OVERRIDES --- */
 @media (max-width: 768px) {
-  /* 1. Fix the Container Padding (Too much space on small screens) */
   .container {
     padding: 15px;
   }
-
-  /* 2. Stack the Navigation */
   nav {
     flex-direction: column;
     padding: 15px;
@@ -321,14 +318,12 @@ a:hover{
     flex-wrap: wrap;
     justify-content: center;
   }
-
-  /* 3. Hero Section (Fix shrunken text) */
   .home-hero {
     padding: 40px 15px;
     margin-bottom: 25px;
   }
   .home-hero h1 {
-    font-size: 28px; /* Larger, readable size */
+    font-size: 28px;
   }
   .home-hero p {
     font-size: 16px;
@@ -337,38 +332,28 @@ a:hover{
     flex-direction: column;
     width: 100%;
   }
-
-  /* 4. Dashboard & Forms (Remove fixed widths) */
   .form-container, 
   .dashboard-container,
   .modal-content {
     padding: 20px;
     width: 100%;
     max-width: 100%;
-    border-radius: 0; /* Looks more like a native app */
+    border-radius: 0;
   }
-
-  /* 5. The Table Fix (Prevents "Squizzing") */
-  table {
     display: block;
-    overflow-x: auto; /* Adds a swipe-to-see-more scrollbar */
+    overflow-x: auto;
     white-space: nowrap;
   }
   th, td {
     padding: 10px;
     font-size: 13px;
   }
-
-  /* 6. Dashboard Cards (Stack them 1-by-1) */
   .dashboard-overview {
     grid-template-columns: 1fr;
   }
-  
   .card p {
     font-size: 22px;
   }
-
-  /* 7. Footer (Stack sections) */
   .footer-container {
     grid-template-columns: 1fr;
     text-align: center;
@@ -378,6 +363,7 @@ a:hover{
 </head>
 
 <body>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <nav>
   <div class="nav-left"><h1>TKT Mechanics</h1></div>
   <div class="nav-right" id="navButtons">
