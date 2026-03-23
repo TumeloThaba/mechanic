@@ -26,8 +26,8 @@ body{
   min-height:100vh;
 }
 .container {
-  padding: 40px;
-}
+      padding: 40px;
+    }
 nav{
   display:flex;
   justify-content:space-between;
@@ -111,72 +111,23 @@ button:hover{
   background:var(--red);
   transform:translateY(-1px);
 }
-
-/* --- DESKTOP GRID (Forced 3 Columns) --- */
-.dashboard-overview,
-.home-cards {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr); /* Exactly 3 columns */
-  gap: 20px;
-  margin-bottom: 40px;
-}
-
-.card {
-  background: white;
-  padding: 25px;
-  border-radius: 16px;
-  box-shadow: 0 12px 30px rgba(0,0,0,.06);
-  text-align: center;
-  transition: .3s;
-  cursor: pointer;
-}
-.card:hover{
-  transform:translateY(-6px);
-  box-shadow:0 20px 40px rgba(0,0,0,.1);
-}
-.card img{
-  width:70px;
-  margin-bottom:15px;
-}
-.card h2{
-  font-size:22px; /* Desktop size */
-  margin-bottom:10px;
-}
-.card p{
-  color:var(--gray);
-  font-size:15px; /* Desktop size */
-}
-
-/* Dashboard specific card text */
-.card h3 {
-  margin: 0;
-  font-size: 16px;
-  color: #6b7280;
-}
-.card p.stat {
-  font-size: 28px;
-  font-weight: bold;
-  margin-top: 10px;
-  color: #111827;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 15px;
-  background: white;
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-}
-th, td {padding: 12px;text-align: left;font-size: 14px;}
-th {background: #111827;color: rgb(21, 88, 214);}
-tr:nth-child(even) {background: #eeeff0;}
-
+.dashboard-overview {
+      display: grid;grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));gap: 20px;margin-bottom: 40px;
+    }
+  .card {
+      background: white;padding: 25px;border-radius: 10px;box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    }.card h3 {
+      margin: 0;font-size: 16px;color: #6b7280;}.card p {font-size: 28px;font-weight: bold;margin-top: 10px;color: #111827;}
+ table {
+      width: 100%;border-collapse: collapse;margin-top: 15px;background: white;border-radius: 10px;overflow: hidden;box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }th, td {padding: 12px;text-align: left;font-size: 14px;}th {background: #111827;color: rgb(21, 88, 214);}tr:nth-child(even) {background: #eeeff0;}
 a{
   color:var(--teal-dark);
   text-decoration:none;
   font-weight:600;
+}
+a:hover{
+  color:var(--teal-dark);
 }
 .dashboard-banner{
   background:linear-gradient(120deg,var(--teal),var(--teal-dark));
@@ -188,12 +139,25 @@ a{
   font-weight:700;
   margin-bottom:30px;
 }
+
 #welcomeUser{
   background:var(--teal-dark);
   padding:20px;
   border-radius:10px;
   font-weight:600;
   color:var(--black);
+}
+.logout-btn{
+  background:var(--teal);
+  color:rgb(44, 92, 223);
+  padding:8px 14px;
+  border-radius:6px;
+  border:none;
+  cursor:pointer;
+  font-weight:600;
+}
+.logout-btn:hover{
+  opacity:.9;
 }
 .home-hero{
   background:linear-gradient(135deg,var(--teal),var(--teal-dark));
@@ -221,7 +185,39 @@ a{
   padding:15px 28px;
   font-size:16px;
 }
-
+.hero-buttons button:hover{
+  background:#7e09df;
+}
+.home-cards{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:30px;
+}
+.card{
+  background:white;
+  padding:30px;
+  border-radius:16px;
+  box-shadow:0 12px 30px rgba(0,0,0,.06);
+  text-align:center;
+  transition:.3s;
+  cursor:pointer;
+}
+.card:hover{
+  transform:translateY(-6px);
+  box-shadow:0 20px 40px rgba(0,0,0,.1);
+}
+.card img{
+  width:70px;
+  margin-bottom:15px;
+}
+.card h2{
+  font-size:22px;
+  margin-bottom:10px;
+}
+.card p{
+  color:var(--gray);
+  font-size:15px;
+}
 .modal{
   position:fixed;
   top:0;
@@ -244,12 +240,25 @@ a{
   position:relative;
 }
 
+.close{
+  position:absolute;
+  top:15px;
+  right:20px;
+  font-size:24px;
+  cursor:pointer;
+  color:var(--gray);
+}
+.close:hover{
+  color:var(--black);
+}
+
 .footer{
   background:var(--black);
   color:white;
   padding:50px 20px 20px;
   margin-top:60px;
 }
+
 .footer-container{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
@@ -258,35 +267,110 @@ a{
   margin:auto;
 }
 
-/* --- MOBILE RESPONSIVE (Strictly 2 Columns & Smaller Text) --- */
+.footer-section h3,
+.footer-section h4{
+  color:var(--peach);
+}
+
+.footer-section p{
+  color:#cbd5f5;
+  font-size:14px;
+}
+
+.footer-section ul{
+  list-style:none;
+  padding:0;
+}
+
+.footer-section ul li{
+  margin-bottom:8px;
+}
+
+.footer-section ul li a{
+  color:#94a3b8;
+}
+
+.footer-section ul li a:hover{
+  color:var(--peach);
+}
+
+.footer-bottom{
+  text-align:center;
+  margin-top:40px;
+  border-top:1px solid #1e293b;
+  padding-top:15px;
+  font-size:13px;
+  color:#94a3b8;
+}/* --- MOBILE RESPONSIVE OVERRIDES --- */
 @media (max-width: 768px) {
-  .dashboard-overview,
-  .home-cards {
-    grid-template-columns: 1fr 1fr !important; /* Exactly 2 columns */
-    gap: 12px;
+  /* 1. Fix the Container Padding (Too much space on small screens) */
+  .container {
+    padding: 15px;
   }
-  .card {
-    padding: 15px; /* Less padding to fit columns */
+
+  /* 2. Stack the Navigation */
+  nav {
+    flex-direction: column;
+    padding: 15px;
+    gap: 15px;
+    text-align: center;
   }
-  .card h2 {
-    font-size: 16px; /* Scaled down for mobile cards */
+  .nav-right {
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
   }
-  .card p {
-    font-size: 13px; /* Scaled down for mobile cards */
-  }
-  .card p.stat {
-    font-size: 20px; /* Scaled down dashboard stats */
-  }
-  .card img {
-    width: 45px; /* Smaller icons for 2-column view */
+
+  /* 3. Hero Section (Fix shrunken text) */
+  .home-hero {
+    padding: 40px 15px;
+    margin-bottom: 25px;
   }
   .home-hero h1 {
-    font-size: 30px;
+    font-size: 28px; /* Larger, readable size */
   }
- table {
+  .home-hero p {
+    font-size: 16px;
+  }
+  .hero-buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  /* 4. Dashboard & Forms (Remove fixed widths) */
+  .form-container, 
+  .dashboard-container,
+  .modal-content {
+    padding: 20px;
+    width: 100%;
+    max-width: 100%;
+    border-radius: 0; /* Looks more like a native app */
+  }
+
+  /* 5. The Table Fix (Prevents "Squizzing") */
+  table {
     display: block;
-    overflow-x: auto;
+    overflow-x: auto; /* Adds a swipe-to-see-more scrollbar */
     white-space: nowrap;
+  }
+  th, td {
+    padding: 10px;
+    font-size: 13px;
+  }
+
+  /* 6. Dashboard Cards (Stack them 1-by-1) */
+  .dashboard-overview {
+    grid-template-columns: 1fr;
+  }
+  
+  .card p {
+    font-size: 22px;
+  }
+
+  /* 7. Footer (Stack sections) */
+  .footer-container {
+    grid-template-columns: 1fr;
+    text-align: center;
   }
 }
 </style>
