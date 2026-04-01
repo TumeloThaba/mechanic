@@ -1240,6 +1240,17 @@ function attachClientSubmitHandler() {
     serviceForm.dataset.listener = "true";
   }
 }
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    // user is logged in, now attach the submit handler
+    attachClientSubmitHandler();
+  } else {
+    // user not logged in yet
+    console.log("User not logged in");
+  }
+});
 document.getElementById("findMechanicCard")?.addEventListener("click", () => {
 
   document.getElementById("modalContentArea").innerHTML = `
