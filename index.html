@@ -1207,6 +1207,8 @@ function attachClientSubmitHandler() {
           const firstKey = Object.keys(mechanics)[0];
           matchedMechanic = { id: firstKey, ...mechanics[firstKey] };
         }
+        console.log("Current user:", auth.currentUser);
+        console.log("Database ref test:", ref(database, "serviceRequests"));
 
         // 🔥 SAVE REQUEST
         await push(ref(database, "serviceRequests"), {
@@ -1238,11 +1240,9 @@ function attachClientSubmitHandler() {
         alert("Error submitting request: " + error.message);
       }
     });
-
-    // Mark listener attached to prevent duplicate handlers
     serviceForm.dataset.listener = "true";
   }
-} // <-- closes attachClientSubmitHandler
+}
 document.getElementById("findMechanicCard")?.addEventListener("click", () => {
 
   document.getElementById("modalContentArea").innerHTML = `
