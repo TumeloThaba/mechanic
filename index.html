@@ -1164,6 +1164,7 @@ function attachClientSubmitHandler() {
       e.preventDefault();
 
       try {
+        // ✅ Check user is logged in
         const user = auth.currentUser;
         if (!user) {
           alert("Login first");
@@ -1182,14 +1183,14 @@ function attachClientSubmitHandler() {
         // --- Fetch mechanics ---
         const snapshot = await get(ref(database, "mechanics"));
         if (!snapshot.exists()) {
-          alert("No mechanics found");
+          alert("No mechanics available at the moment");
           return;
         }
 
         const mechanics = snapshot.val();
         let matchedMechanic = null;
 
-        // --- Find mechanic based on location, vehicle, problem, availability ---
+        // --- Assign mechanic based on location, car type, problem type, availability ---
         Object.keys(mechanics).forEach(key => {
           const mech = mechanics[key];
           const matchesLocation = mech.location === location;
@@ -1208,7 +1209,7 @@ function attachClientSubmitHandler() {
           matchedMechanic = { id: firstKey, ...mechanics[firstKey] };
         }
 
-        // --- Save service request ---
+        // --- Push the service request to database ---
         await push(ref(database, "serviceRequests"), {
           clientId: user.uid,
           clientName: user.email,
@@ -1226,31 +1227,33 @@ function attachClientSubmitHandler() {
           createdAt: new Date().toISOString()
         });
 
-        // --- Success ---
-        alert(`Assigned to ${matchedMechanic.name}`);
+        // ✅ Success alert
+        alert(`Your request has been submitted and assigned to ${matchedMechanic.name}`);
         serviceForm.reset();
 
       } catch (error) {
         console.error(error);
         alert("Error submitting request: " + error.message);
       }
+
     });
 
     // Prevent duplicate listeners
     serviceForm.dataset.listener = "true";
   }
 }
+
+// --- Attach submit handler only when user is logged in ---
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
 onAuthStateChanged(auth, (user) => {
   if (user) {
-    // user is logged in, now attach the submit handler
     attachClientSubmitHandler();
   } else {
-    // user not logged in yet
     console.log("User not logged in");
   }
 });
+  
 document.getElementById("findMechanicCard")?.addEventListener("click", () => {
 
   document.getElementById("modalContentArea").innerHTML = `
