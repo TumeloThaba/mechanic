@@ -1160,84 +1160,89 @@ function attachClientSubmitHandler() {
   const serviceForm = document.getElementById('serviceForm');
   if (serviceForm && !serviceForm.dataset.listener) {
 
-  serviceForm.addEventListener('submit', async (e) => {
-  e.preventDefault();
+    serviceForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
 
-  try {
-    const user = auth.currentUser;
-    if (!user) {
-      alert("Login first");
-      return;
-    }
+      try {
+        const user = auth.currentUser;
+        if (!user) {
+          alert("Login first");
+          return;
+        }
 
-    const bookingDate = document.getElementById("bookingDate").value;
-    const bookingTime = document.getElementById("bookingTime").value;
-    const vehicleType = document.getElementById('vehicleType').value;
-    const problemType = document.getElementById('problemType').value;
-    const description = document.getElementById('description').value;
-    const location = document.getElementById('location').value;
-    const urgency = document.getElementById('urgency').value;
+        const bookingDate = document.getElementById("bookingDate").value;
+        const bookingTime = document.getElementById("bookingTime").value;
+        const vehicleType = document.getElementById('vehicleType').value;
+        const problemType = document.getElementById('problemType').value;
+        const description = document.getElementById('description').value;
+        const location = document.getElementById('location').value;
+        const urgency = document.getElementById('urgency').value;
 
-    // 🔥 GET MECHANICS
-    const snapshot = await get(ref(database, "mechanics"));
+        // 🔥 GET MECHANICS
+        const snapshot = await get(ref(database, "mechanics"));
 
-    if (!snapshot.exists()) {
-      alert("No mechanics found");
-      return;
-    }
+        if (!snapshot.exists()) {
+          alert("No mechanics found");
+          return;
+        }
 
-    const mechanics = snapshot.val();
-    let matchedMechanic = null;
+        const mechanics = snapshot.val();
+        let matchedMechanic = null;
 
-    Object.keys(mechanics).forEach(key => {
-      const mech = mechanics[key];
+        Object.keys(mechanics).forEach(key => {
+          const mech = mechanics[key];
 
-      const matchesLocation = mech.location === location;
-      const matchesCar = mech.carTypes?.includes(vehicleType);
-      const matchesProblem = mech.specialties?.includes(problemType);
-      const isAvailable = mech.isAvailable === true;
+          const matchesLocation = mech.location === location;
+          const matchesCar = mech.carTypes?.includes(vehicleType);
+          const matchesProblem = mech.specialties?.includes(problemType);
+          const isAvailable = mech.isAvailable === true;
 
-      if (matchesLocation && matchesCar && matchesProblem && isAvailable && !matchedMechanic) {
-        matchedMechanic = { id: key, ...mech };
+          if (matchesLocation && matchesCar && matchesProblem && isAvailable && !matchedMechanic) {
+            matchedMechanic = { id: key, ...mech };
+          }
+        });
+
+        // 🔁 fallback
+        if (!matchedMechanic) {
+          const firstKey = Object.keys(mechanics)[0];
+          matchedMechanic = { id: firstKey, ...mechanics[firstKey] };
+        }
+
+        // 🔥 SAVE REQUEST
+        await push(ref(database, "serviceRequests"), {
+          clientId: user.uid,
+          clientName: user.email,
+
+          bookingDate,
+          bookingTime,
+          vehicleType,
+          problemType,
+          description,
+          location,
+          urgency,
+
+          assignedMechanicId: matchedMechanic.id,
+          assignedMechanicName: matchedMechanic.name,
+
+          status: "pending",
+          paymentStatus: "unpaid",
+          createdAt: new Date().toISOString()
+        });
+
+        // ✅ SUCCESS
+        alert(`Assigned to ${matchedMechanic.name}`);
+        serviceForm.reset();
+
+      } catch (error) {
+        console.error(error);
+        alert("Error submitting request: " + error.message);
       }
     });
 
-    // 🔁 fallback
-    if (!matchedMechanic) {
-      const firstKey = Object.keys(mechanics)[0];
-      matchedMechanic = { id: firstKey, ...mechanics[firstKey] };
-    }
-
-    // 🔥 SAVE REQUEST
-    await push(ref(database, "serviceRequests"), {
-      clientId: user.uid,
-      clientName: user.email,
-
-      bookingDate,
-      bookingTime,
-      vehicleType,
-      problemType,
-      description,
-      location,
-      urgency,
-
-      assignedMechanicId: matchedMechanic.id,
-      assignedMechanicName: matchedMechanic.name,
-
-      status: "pending",
-      paymentStatus: "unpaid",
-      createdAt: new Date().toISOString()
-    });
-
-    // ✅ SUCCESS (ONLY ONCE)
-    alert(`Assigned to ${matchedMechanic.name}`);
-    serviceForm.reset();
-
-  } catch (error) {
-    console.error(error);
-    alert("Error submitting request: " + error.message);
+    // Mark listener attached to prevent duplicate handlers
+    serviceForm.dataset.listener = "true";
   }
-});
+} // <-- closes attachClientSubmitHandler
 document.getElementById("findMechanicCard")?.addEventListener("click", () => {
 
   document.getElementById("modalContentArea").innerHTML = `
