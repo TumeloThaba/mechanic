@@ -1160,27 +1160,25 @@ function attachClientSubmitHandler() {
   const serviceForm = document.getElementById('serviceForm');
   if (serviceForm && !serviceForm.dataset.listener) {
 
-    serviceForm.addEventListener('submit', async (e) => {
+  serviceForm.addEventListener('submit', async (e) => {
   e.preventDefault();
-  console.log("SUBMIT WORKING");
-
-  const user = auth.currentUser;
-  if (!user) {
-    alert("Login first");
-    return;
-  }
-
-  const bookingDate = document.getElementById("bookingDate").value;
-  const bookingTime = document.getElementById("bookingTime").value;
-  const vehicleType = document.getElementById('vehicleType').value;
-  const problemType = document.getElementById('problemType').value;
-  const description = document.getElementById('description').value;
-  const location = document.getElementById('location').value;
-  const urgency = document.getElementById('urgency').value;
 
   try {
+    const user = auth.currentUser;
+    if (!user) {
+      alert("Login first");
+      return;
+    }
 
-    // 🔥 STEP 1: GET ALL MECHANICS
+    const bookingDate = document.getElementById("bookingDate").value;
+    const bookingTime = document.getElementById("bookingTime").value;
+    const vehicleType = document.getElementById('vehicleType').value;
+    const problemType = document.getElementById('problemType').value;
+    const description = document.getElementById('description').value;
+    const location = document.getElementById('location').value;
+    const urgency = document.getElementById('urgency').value;
+
+    // 🔥 GET MECHANICS
     const snapshot = await get(ref(database, "mechanics"));
 
     if (!snapshot.exists()) {
@@ -1189,10 +1187,8 @@ function attachClientSubmitHandler() {
     }
 
     const mechanics = snapshot.val();
-
     let matchedMechanic = null;
 
-    // 🔥 STEP 2: SMART MATCHING
     Object.keys(mechanics).forEach(key => {
       const mech = mechanics[key];
 
@@ -1202,24 +1198,18 @@ function attachClientSubmitHandler() {
       const isAvailable = mech.isAvailable === true;
 
       if (matchesLocation && matchesCar && matchesProblem && isAvailable && !matchedMechanic) {
-        matchedMechanic = {
-          id: key,
-          ...mech
-        };
+        matchedMechanic = { id: key, ...mech };
       }
     });
 
-    // 🔁 STEP 3: FALLBACK
+    // 🔁 fallback
     if (!matchedMechanic) {
       const firstKey = Object.keys(mechanics)[0];
-      matchedMechanic = {
-        id: firstKey,
-        ...mechanics[firstKey]
-      };
+      matchedMechanic = { id: firstKey, ...mechanics[firstKey] };
     }
 
-    // 🔥 STEP 4: SAVE WITH ASSIGNED MECHANIC
-    const newRef = await push(ref(database, "serviceRequests"), {
+    // 🔥 SAVE REQUEST
+    await push(ref(database, "serviceRequests"), {
       clientId: user.uid,
       clientName: user.email,
 
@@ -1236,13 +1226,11 @@ function attachClientSubmitHandler() {
 
       status: "pending",
       paymentStatus: "unpaid",
-
       createdAt: new Date().toISOString()
     });
 
-    // 🔥 STEP 5: SHOW USER
+    // ✅ SUCCESS (ONLY ONCE)
     alert(`Assigned to ${matchedMechanic.name}`);
-
     serviceForm.reset();
 
   } catch (error) {
@@ -1250,18 +1238,6 @@ function attachClientSubmitHandler() {
     alert("Error submitting request: " + error.message);
   }
 });
-        alert("Request submitted successfully!");
-        serviceForm.reset();
-
-      } catch (error) {
-        console.error(error);
-        alert("Error submitting request: " + error.message);
-      }
-    });
-    // Mark listener attached to prevent duplicate handlers
-    serviceForm.dataset.listener = "true";
-  }
-}
 document.getElementById("findMechanicCard")?.addEventListener("click", () => {
 
   document.getElementById("modalContentArea").innerHTML = `
