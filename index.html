@@ -295,6 +295,67 @@ a:hover{
   font-size:13px;
   color:#94a3b8;
 }
+  .footer{
+  background: linear-gradient(135deg, var(--black), #020617);
+  color: white;
+  padding: 60px 20px 25px;
+  margin-top: 60px;
+}
+
+.footer-container{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 40px;
+  max-width: 1200px;
+  margin: auto;
+}
+
+.footer-section h3{
+  font-size: 22px;
+  color: var(--peach);
+  margin-bottom: 10px;
+}
+
+.footer-section h4{
+  font-size: 16px;
+  color: var(--peach);
+  margin-bottom: 12px;
+}
+
+.footer-section p{
+  color: #cbd5e1;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.footer-section ul{
+  list-style: none;
+  padding: 0;
+}
+
+.footer-section ul li{
+  margin-bottom: 10px;
+}
+
+.footer-section ul li a{
+  color: #94a3b8;
+  text-decoration: none;
+  font-size: 14px;
+  transition: 0.3s ease;
+  position: relative;
+}
+
+.footer-section ul li a:hover{
+  color: white;
+}
+.footer-bottom{
+  text-align: center;
+  margin-top: 50px;
+  border-top: 1px solid #1e293b;
+  padding-top: 20px;
+  font-size: 13px;
+  color: #94a3b8;
+}
   /* --- MOBILE RESPONSIVE OVERRIDES --- */
 @media (max-width: 768px) {
   .container {
@@ -1383,7 +1444,7 @@ if (!form.checkValidity()) {
   <div class="footer-bottom">
     <p>&copy; 2026 TKT Mechanics</p>
   </div>
-</footer>  
+</footer>
 </body>
 </html>
 
