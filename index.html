@@ -2335,24 +2335,7 @@ document.getElementById('complaintForm').addEventListener('submit', async e => {
     showToast('Error sending complaint.', 'error');
   }
 });
-   let currentRequest = null;
-
-function handleRequestSubmit(data) {
-  currentRequest = data.request;
-
-  // open modal
-  document.getElementById("mechanicModal").classList.remove("hidden");
-
-  // fill request details
-  document.getElementById("m_problem").innerText = data.request.problemType;
-  document.getElementById("m_fuel").innerText = data.request.fuelType;
-  document.getElementById("m_vehicle").innerText = data.request.vehicleType;
-  document.getElementById("m_location").innerText = data.request.location;
-
-  // render mechanics
-  renderRecommended(data.recommended);
-  renderMechanics(data.mechanics);
-}
+  
 </script>
 </body>
 </html>
