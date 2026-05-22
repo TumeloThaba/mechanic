@@ -1713,6 +1713,7 @@ textarea.form-input { resize: vertical; min-height: 90px; }
   </div>
 </div>
 
+<!-- ===================== SCRIPTS ===================== -->
 <script>
 /* ============================================================
    DESKTOP LAYOUT SWITCH
@@ -2228,7 +2229,7 @@ function attachClientSubmitHandler() {
       createdAt:    new Date().toISOString()
     };
 
- try {
+    try {
       const newRef = await push(ref(database, 'serviceRequests'), payload);
       await assignMechanics(newRef.key, payload.vehicleType, payload.problemType, clientLatitude, clientLongitude);
       showToast('Request submitted successfully!', 'success');
@@ -2236,6 +2237,9 @@ function attachClientSubmitHandler() {
     } catch (err) {
       showToast('Error: ' + err.message, 'error');
     }
+  });
+}
+
 document.getElementById('quickRequestForm').addEventListener('submit', async e => {
   e.preventDefault();
   const user = auth.currentUser;
@@ -2300,7 +2304,6 @@ document.getElementById('complaintForm').addEventListener('submit', async e => {
     showToast('Error sending complaint.', 'error');
   }
 });
-  
 </script>
 </body>
 </html>
