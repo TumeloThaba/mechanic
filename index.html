@@ -2348,8 +2348,11 @@ function attachClientSubmitHandler() {
       createdAt:    new Date().toISOString()
     };
 
-  try {
+try {
+  console.log("Submitting request...");
+
   const newRef = await push(ref(database, 'serviceRequests'), payload);
+  console.log("Request saved:", newRef.key);
 
   await assignMechanics(
     newRef.key,
@@ -2359,30 +2362,28 @@ function attachClientSubmitHandler() {
     clientLongitude
   );
 
+  console.log("Mechanics assigned");
+
   showToast('Request submitted successfully!', 'success');
 
-  // get matched mechanics (if your function supports it)
-  const matchedMechanics =
-    (await assignMechanics?.returnMatched?.()) || []; // fallback safe
+  const requestData = {
+    id: newRef.key,
+    ...payload
+  };
 
-  const recommendedMechanic = matchedMechanics[0] || null;
+  console.log("Opening modal...");
 
-  // SEND TO MODAL (THIS IS THE MISSING LINK)
   handleRequestSubmit({
-    request: {
-      id: newRef.key,
-      ...payload
-    },
-    recommended: recommendedMechanic,
-    mechanics: matchedMechanics
+    request: requestData,
+    recommended: null,
+    mechanics: []
   });
 
   form.reset();
 
 } catch (err) {
+  console.error("SUBMIT ERROR:", err);
   showToast('Error: ' + err.message, 'error');
-}
-  });
 }
 
 document.getElementById('quickRequestForm').addEventListener('submit', async e => {
