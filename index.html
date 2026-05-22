@@ -2348,44 +2348,14 @@ function attachClientSubmitHandler() {
       createdAt:    new Date().toISOString()
     };
 
-try {
-  console.log("Submitting request...");
-
-  const newRef = await push(ref(database, 'serviceRequests'), payload);
-  console.log("Request saved:", newRef.key);
-
-  await assignMechanics(
-    newRef.key,
-    payload.vehicleType,
-    payload.problemType,
-    clientLatitude,
-    clientLongitude
-  );
-
-  console.log("Mechanics assigned");
-
-  showToast('Request submitted successfully!', 'success');
-
-  const requestData = {
-    id: newRef.key,
-    ...payload
-  };
-
-  console.log("Opening modal...");
-
-  handleRequestSubmit({
-    request: requestData,
-    recommended: null,
-    mechanics: []
-  });
-
-  form.reset();
-
-} catch (err) {
-  console.error("SUBMIT ERROR:", err);
-  showToast('Error: ' + err.message, 'error');
-}
-
+ try {
+      const newRef = await push(ref(database, 'serviceRequests'), payload);
+      await assignMechanics(newRef.key, payload.vehicleType, payload.problemType, clientLatitude, clientLongitude);
+      showToast('Request submitted successfully!', 'success');
+      form.reset();
+    } catch (err) {
+      showToast('Error: ' + err.message, 'error');
+    }
 document.getElementById('quickRequestForm').addEventListener('submit', async e => {
   e.preventDefault();
   const user = auth.currentUser;
