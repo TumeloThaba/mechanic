@@ -1698,41 +1698,6 @@ textarea.form-input { resize: vertical; min-height: 90px; }
     </div>
   </div>
 </div>
-   <!-- Assigned Mechanic Modal -->
-<div id="mechanicModal" class="modal hidden">
-  <div class="modal-content">
-
-    <div class="modal-header">
-      <h2>Select a Mechanic</h2>
-      <button onclick="closeMechanicModal()">×</button>
-    </div>
-
-    <div class="modal-body">
-
-      <div class="request-summary">
-        <p><strong>Problem:</strong> <span id="m_problem"></span></p>
-        <p><strong>Fuel:</strong> <span id="m_fuel"></span></p>
-        <p><strong>Vehicle:</strong> <span id="m_vehicle"></span></p>
-        <p><strong>Location:</strong> <span id="m_location"></span></p>
-      </div>
-
-      <h3>Recommended Mechanic</h3>
-      <div id="recommendedMechanic" class="mechanic-card highlight"></div>
-
-      <h3>Other Mechanics</h3>
-      <div id="mechanicList"></div>
-
-    </div>
-
-    <div class="modal-footer">
-      <button onclick="closeMechanicModal()">Cancel</button>
-      <button id="continueBtn" onclick="continueToPayment()" disabled>
-        Continue to Payment
-      </button>
-    </div>
-
-  </div>
-</div>
 
 <!-- ===================== RESET PASSWORD MODAL ===================== -->
 <div class="reset-modal-overlay" id="resetModal">
