@@ -1698,6 +1698,41 @@ textarea.form-input { resize: vertical; min-height: 90px; }
     </div>
   </div>
 </div>
+   <!-- Assigned Mechanic Modal -->
+<div id="mechanicModal" class="modal hidden">
+  <div class="modal-content">
+
+    <div class="modal-header">
+      <h2>Select a Mechanic</h2>
+      <button onclick="closeMechanicModal()">×</button>
+    </div>
+
+    <div class="modal-body">
+
+      <div class="request-summary">
+        <p><strong>Problem:</strong> <span id="m_problem"></span></p>
+        <p><strong>Fuel:</strong> <span id="m_fuel"></span></p>
+        <p><strong>Vehicle:</strong> <span id="m_vehicle"></span></p>
+        <p><strong>Location:</strong> <span id="m_location"></span></p>
+      </div>
+
+      <h3>Recommended Mechanic</h3>
+      <div id="recommendedMechanic" class="mechanic-card highlight"></div>
+
+      <h3>Other Mechanics</h3>
+      <div id="mechanicList"></div>
+
+    </div>
+
+    <div class="modal-footer">
+      <button onclick="closeMechanicModal()">Cancel</button>
+      <button id="continueBtn" onclick="continueToPayment()" disabled>
+        Continue to Payment
+      </button>
+    </div>
+
+  </div>
+</div>
 
 <!-- ===================== RESET PASSWORD MODAL ===================== -->
 <div class="reset-modal-overlay" id="resetModal">
@@ -1713,7 +1748,6 @@ textarea.form-input { resize: vertical; min-height: 90px; }
   </div>
 </div>
 
-<!-- ===================== SCRIPTS ===================== -->
 <script>
 /* ============================================================
    DESKTOP LAYOUT SWITCH
@@ -1809,6 +1843,91 @@ document.getElementById('closeResetModal').addEventListener('click', () => close
 document.getElementById('resetModal').addEventListener('click', (e) => {
   if (e.target === document.getElementById('resetModal')) closeModal('resetModal');
 });
+
+   //assign mechanic funchtion//
+let selectedMechanic = null;
+let currentRequest = null;
+
+// Fake mechanics (replace with DB later)
+const mechanics = [
+  { id: 1, name: "John Auto Repairs", rating: 4.8, distance: "3km", fuel: "Diesel" },
+  { id: 2, name: "Mike Motors", rating: 4.5, distance: "5km", fuel: "Petrol" },
+  { id: 3, name: "SpeedFix Garage", rating: 4.7, distance: "2km", fuel: "Diesel" }
+];
+
+// SUBMIT HANDLER (CALL THIS AFTER FORM SUBMIT SUCCESS)
+function handleRequestSubmit(requestData) {
+  currentRequest = requestData;
+
+  // show modal
+  document.getElementById("mechanicModal").classList.remove("hidden");
+
+  // fill request summary
+  document.getElementById("m_problem").innerText = requestData.problemType;
+  document.getElementById("m_fuel").innerText = requestData.fuelType;
+  document.getElementById("m_vehicle").innerText = requestData.vehicleType;
+  document.getElementById("m_location").innerText = requestData.location;
+
+  // recommended mechanic (simple logic)
+  const recommended = mechanics[0];
+  renderRecommended(recommended);
+
+  // other mechanics
+  renderMechanics(mechanics);
+}
+
+function renderRecommended(mechanic) {
+  document.getElementById("recommendedMechanic").innerHTML = `
+    <h4>${mechanic.name}</h4>
+    <p>⭐ ${mechanic.rating} | ${mechanic.distance}</p>
+    <button onclick="selectMechanic(${mechanic.id})">Select</button>
+  `;
+}
+
+function renderMechanics(list) {
+  const container = document.getElementById("mechanicList");
+  container.innerHTML = "";
+
+  list.forEach(m => {
+    container.innerHTML += `
+      <div class="mechanic-card" id="m_${m.id}">
+        <strong>${m.name}</strong>
+        <p>⭐ ${m.rating} | ${m.distance} | ${m.fuel}</p>
+        <button onclick="selectMechanic(${m.id})">Choose</button>
+      </div>
+    `;
+  });
+}
+
+function selectMechanic(id) {
+  selectedMechanic = mechanics.find(m => m.id === id);
+
+  document.querySelectorAll(".mechanic-card").forEach(el => {
+    el.classList.remove("selected");
+  });
+
+  const selectedEl = document.getElementById("m_" + id);
+  if (selectedEl) selectedEl.classList.add("selected");
+
+  document.getElementById("continueBtn").disabled = false;
+}
+
+function continueToPayment() {
+  if (!selectedMechanic) return;
+
+  // save assignment (local example)
+  currentRequest.assignedMechanic = selectedMechanic;
+
+  // close modal
+  closeMechanicModal();
+
+  // go to payment page (replace with your logic)
+  window.location.href = "/payment.html";
+}
+
+function closeMechanicModal() {
+  document.getElementById("mechanicModal").classList.add("hidden");
+}
 
 /* ============================================================
    Safe & Reliable modal
@@ -2229,14 +2348,40 @@ function attachClientSubmitHandler() {
       createdAt:    new Date().toISOString()
     };
 
-    try {
-      const newRef = await push(ref(database, 'serviceRequests'), payload);
-      await assignMechanics(newRef.key, payload.vehicleType, payload.problemType, clientLatitude, clientLongitude);
-      showToast('Request submitted successfully!', 'success');
-      form.reset();
-    } catch (err) {
-      showToast('Error: ' + err.message, 'error');
-    }
+  try {
+  const newRef = await push(ref(database, 'serviceRequests'), payload);
+
+  await assignMechanics(
+    newRef.key,
+    payload.vehicleType,
+    payload.problemType,
+    clientLatitude,
+    clientLongitude
+  );
+
+  showToast('Request submitted successfully!', 'success');
+
+  // get matched mechanics (if your function supports it)
+  const matchedMechanics =
+    (await assignMechanics?.returnMatched?.()) || []; // fallback safe
+
+  const recommendedMechanic = matchedMechanics[0] || null;
+
+  // SEND TO MODAL (THIS IS THE MISSING LINK)
+  handleRequestSubmit({
+    request: {
+      id: newRef.key,
+      ...payload
+    },
+    recommended: recommendedMechanic,
+    mechanics: matchedMechanics
+  });
+
+  form.reset();
+
+} catch (err) {
+  showToast('Error: ' + err.message, 'error');
+}
   });
 }
 
@@ -2304,6 +2449,24 @@ document.getElementById('complaintForm').addEventListener('submit', async e => {
     showToast('Error sending complaint.', 'error');
   }
 });
+   let currentRequest = null;
+
+function handleRequestSubmit(data) {
+  currentRequest = data.request;
+
+  // open modal
+  document.getElementById("mechanicModal").classList.remove("hidden");
+
+  // fill request details
+  document.getElementById("m_problem").innerText = data.request.problemType;
+  document.getElementById("m_fuel").innerText = data.request.fuelType;
+  document.getElementById("m_vehicle").innerText = data.request.vehicleType;
+  document.getElementById("m_location").innerText = data.request.location;
+
+  // render mechanics
+  renderRecommended(data.recommended);
+  renderMechanics(data.mechanics);
+}
 </script>
 </body>
 </html>
